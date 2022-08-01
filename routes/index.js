@@ -8,6 +8,8 @@ var mqttClient = new mqttHandler();
 
 var socket_client = require("socket.io-client")('http://localhost:3000');
 
+
+
 router.get('/io/:cid', async function (req, res, next) {
   cid = req.params.cid
   await socket_client.emit("cid", cid);
@@ -40,28 +42,14 @@ router.get("/mqtt/:msg", function (req, res) {
 router.post('/diag', async function (req, res, next) {
 
   d_update = new Date();
-  //console.log(req.body.data, req.body.data.length);
+  console.log(req.body);
   var result = 'err'
   try {
     result = await knex('diag')
-      .insert({
-        id: null,
-        cid: req.body.data[0],
-        fullname: req.body.data[1],
-        sex: req.body.data[2],
-        birth: req.body.data[3],
-        hoscode: req.body.data[4],
-        hosname: req.body.data[5],
-        date_serv: req.body.data[6],
-        time_serv: req.body.data[7],
-        dx_code: req.body.data[8],
-        dx_name: req.body.data[9],
-        cc: req.body.data[10],
-        d_update: d_update
-      })
+      .insert(req.body)
 
   } catch (error) {
-    //console.log(error)
+    console.log(error)
     result = error.code
   }
 
@@ -76,12 +64,79 @@ router.post('/diag', async function (req, res, next) {
 });
 
 router.post('/drug', async function (req, res, next) {
-  //console.log(req.body.data)
+  d_update = new Date();
+  console.log(req.body);
+  var result = 'err'
+  try {
+    result = await knex('drug')
+      .insert(req.body)
+
+  } catch (error) {
+    console.log(error)
+    result = error.code
+  }
+
   res.json({
     'send_to_drug': {
-      'result': 'success'
+      'result': result
     }
   })
+});
+
+router.post('/lab', async function (req, res, next) {
+  d_update = new Date();
+  console.log(req.body);
+  var result = 'err'
+  try {
+    result = await knex('lab')
+      .insert(req.body)
+
+  } catch (error) {
+    console.log(error)
+    result = error.code
+  }
+
+  res.json({
+    'send_to_lab': {
+      'result': result
+    }
+  })
+});
+
+router.post('/anc', async function (req, res, next) {
+  d_update = new Date();
+  console.log(req.body);
+  var result = 'err'
+  try {
+    result = await knex('anc')
+      .insert(req.body)
+
+  } catch (error) {
+    console.log(error)
+    result = error.code
+  }
+
+  res.json({
+    'send_to_anc': {
+      'result': result
+    }
+  })
+});
+
+router.post('/test', async function (req, res, next) {
+  console.log(req.body)
+  try {
+    result = await knex('drug')
+      .insert(req.body)
+
+  } catch (error) {
+    console.log(error)
+    result = error.code
+  }
+  res.json({
+    'status': 'success'
+  })
+
 });
 
 
