@@ -9,6 +9,12 @@ var mqttClient = new mqttHandler();
 var socket_client = require("socket.io-client")('http://localhost:3000');
 
 
+router.get('/sql', async function (req, res, next) {
+  result = await knex('c_sql').where({
+    note: '1'
+  }).select('id', 'cmd')
+  res.json(result)
+});
 
 router.get('/io/:cid', async function (req, res, next) {
   cid = req.params.cid
