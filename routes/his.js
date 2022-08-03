@@ -18,7 +18,7 @@ router.get('/', async function (req, res, next) {
     })
 });
 
-router.post('/pt',async function(req,res,next){
+router.post('/pt', async function (req, res, next) {
     cor(res)
     console.log(req.body)
     pt_name = req.body.pt_name
@@ -29,7 +29,7 @@ router.post('/pt',async function(req,res,next){
 
 router.post('/diag', async function (req, res, next) {
     cor(res)
-    console.log(req.body)
+    console.log('diag',req.body)
     cid = req.body.cid
     sql = `select p.cid,concat(p.pname," ",p.fname," ", p.lname) as "fullname",p.sex,
     p.birthday "birth",v.hcode  as "hoscode",'' as "hosname",
@@ -50,9 +50,9 @@ router.post('/diag', async function (req, res, next) {
 
 router.post('/drug', async function (req, res, next) {
     cor(res)
-    console.log(req.body)
-    cid = req.body.cid 
-    date_serv = req.body.date_serv  
+    console.log('drug',req.body)
+    cid = req.body.cid
+    date_serv = req.body.date_serv
     sql = `SELECT
     patient.cid,
     CONCAT(patient.pname,patient.fname,' ',patient.lname) AS fullname,
@@ -76,7 +76,7 @@ router.post('/drug', async function (req, res, next) {
     INNER JOIN drugitems ON opitemrece.icode = drugitems.icode
     LEFT OUTER JOIN drugusage ON opitemrece.drugusage = drugusage.drugusage
     WHERE patient.cid= '${cid}'  and vn_stat.vstdate = '${date_serv}' order by date_serv DESC`
-    console.log(sql)
+    //console.log(sql)
     r = await knex.raw(sql)
     //console.log(r)
     res.json(r[0]);
@@ -84,8 +84,9 @@ router.post('/drug', async function (req, res, next) {
 
 router.post('/lab', async function (req, res, next) {
     cor(res)
-    console.log(req.body)
+    console.log('lab',req.body)
     cid = req.body.cid
+    date_serv = req.body.date_serv
     sql = `SELECT
     patient.cid,
     CONCAT(patient.pname,patient.fname,' ',patient.lname) AS fullname,
@@ -107,7 +108,7 @@ router.post('/lab', async function (req, res, next) {
     LEFT OUTER JOIN lab_order_service ON vn_stat.vn = lab_order_service.vn
     LEFT OUTER JOIN lab_order ON lab_order.lab_order_number = lab_order_service.lab_order_number
     LEFT OUTER JOIN lab_items ON lab_order.lab_items_code = lab_items.lab_items_code
-    WHERE patient.cid='${cid}' having lab_name is not null order by date_serv DESC `
+    WHERE patient.cid='${cid}' and ovst.vstdate = '${date_serv}' having lab_name is not null order by date_serv DESC `
     r = await knex.raw(sql)
     //console.log(r)
     res.json(r[0]);
