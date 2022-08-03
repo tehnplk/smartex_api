@@ -75,7 +75,7 @@ router.post('/drug', async function (req, res, next) {
     LEFT OUTER JOIN opitemrece ON opitemrece.vn = vn_stat.vn
     INNER JOIN drugitems ON opitemrece.icode = drugitems.icode
     LEFT OUTER JOIN drugusage ON opitemrece.drugusage = drugusage.drugusage
-    WHERE patient.cid= '${cid}'  and vn_stat.vstdate = '${date_serv}' order by date_serv DESC`
+    WHERE patient.cid= '${cid}'  and vn_stat.vstdate = '${date_serv}'`
     //console.log(sql)
     r = await knex.raw(sql)
     //console.log(r)
@@ -108,7 +108,7 @@ router.post('/lab', async function (req, res, next) {
     LEFT OUTER JOIN lab_order_service ON vn_stat.vn = lab_order_service.vn
     LEFT OUTER JOIN lab_order ON lab_order.lab_order_number = lab_order_service.lab_order_number
     LEFT OUTER JOIN lab_items ON lab_order.lab_items_code = lab_items.lab_items_code
-    WHERE patient.cid='${cid}' and ovst.vstdate = '${date_serv}' having lab_name is not null order by date_serv DESC `
+    WHERE patient.cid='${cid}' and ovst.vstdate = '${date_serv}' having lab_name is not null  `
     r = await knex.raw(sql)
     //console.log(r)
     res.json(r[0]);
