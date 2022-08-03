@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var knex = require('../con_his');
+var md5 = require('md5')
 
 function cor(res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -41,7 +42,7 @@ router.post('/diag', async function (req, res, next) {
     left outer join icd101 on icd101.code=substring(ovstdiag.icd10,1,3)
     left outer join opdscreen o on o.vn=v.vn
     left outer join patient p on p.hn=ovst.hn
-    where ovstdiag.icd10 is not null and p.cid = '${cid}'  group by date_serv order by date_serv DESC `
+    where ovstdiag.icd10 is not null and md5(p.cid) = '${cid}'  group by date_serv order by date_serv DESC `
     r = await knex.raw(sql)
     //console.log(r)
     res.json(r[0]);
@@ -51,7 +52,8 @@ router.post('/diag', async function (req, res, next) {
 router.post('/drug', async function (req, res, next) {
     cor(res)
     console.log('drug',req.body)
-    cid = req.body.cid
+    cid = req.body.cid    
+    //cid = md5(cid)
     date_serv = req.body.date_serv
     sql = `SELECT
     patient.cid,
@@ -75,7 +77,7 @@ router.post('/drug', async function (req, res, next) {
     LEFT OUTER JOIN opitemrece ON opitemrece.vn = vn_stat.vn
     INNER JOIN drugitems ON opitemrece.icode = drugitems.icode
     LEFT OUTER JOIN drugusage ON opitemrece.drugusage = drugusage.drugusage
-    WHERE patient.cid= '${cid}'  and vn_stat.vstdate = '${date_serv}'`
+    WHERE patient.cid = '${cid}'  and vn_stat.vstdate = '${date_serv}'`
     //console.log(sql)
     r = await knex.raw(sql)
     //console.log(r)
@@ -86,6 +88,7 @@ router.post('/lab', async function (req, res, next) {
     cor(res)
     console.log('lab',req.body)
     cid = req.body.cid
+    //cid = md5(cid)
     date_serv = req.body.date_serv
     sql = `SELECT
     patient.cid,
