@@ -30,7 +30,7 @@ router.post('/pt', async function (req, res, next) {
 
 router.post('/diag', async function (req, res, next) {
     cor(res)
-    console.log('diag',req.body)
+    console.log('diag', req.body)
     cid = req.body.cid
     sql = `select p.cid,concat(p.pname," ",p.fname," ", p.lname) as "fullname",p.sex,
     p.birthday "birth",v.hcode  as "hoscode",'' as "hosname",
@@ -51,8 +51,8 @@ router.post('/diag', async function (req, res, next) {
 
 router.post('/drug', async function (req, res, next) {
     cor(res)
-    console.log('drug',req.body)
-    cid = req.body.cid    
+    console.log('drug', req.body)
+    cid = req.body.cid
     //cid = md5(cid)
     date_serv = req.body.date_serv
     sql = `SELECT
@@ -86,7 +86,7 @@ router.post('/drug', async function (req, res, next) {
 
 router.post('/lab', async function (req, res, next) {
     cor(res)
-    console.log('lab',req.body)
+    console.log('lab', req.body)
     cid = req.body.cid
     //cid = md5(cid)
     date_serv = req.body.date_serv
@@ -118,6 +118,29 @@ router.post('/lab', async function (req, res, next) {
     r = await knex.raw(sql)
     //console.log(r)
     res.json(r[0]);
+
+})
+
+router.post('/drugallergy', async function (req, res, next) {
+    cor(res)
+    console.log('drugallergy', req.body)
+    res.json({
+        'name': 'แอสไพลิน',
+        'symtom': 'พื่นแดง'
+    })
+
+})
+
+router.post('/appoint', async function (req, res, next) {
+    cor(res)
+    console.log('appoint', req.body)
+    res.json({
+        'hos': 'รพ.เด่นชัย',
+        'date': '2022-11-30',
+        'time': '08:30',
+        'dep': 'ผู้ป่วยนอก',
+        'cause': 'ติดตามอาการ'
+    })
 
 })
 
