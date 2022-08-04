@@ -108,10 +108,13 @@ router.post('/lab', async function (req, res, next) {
     LEFT OUTER JOIN patient ON vn_stat.hn = patient.hn
     LEFT OUTER JOIN sex ON patient.sex = sex.code
     LEFT OUTER JOIN hospcode ON vn_stat.hcode = hospcode.hospcode
-    LEFT OUTER JOIN lab_order_service ON vn_stat.vn = lab_order_service.vn
-    LEFT OUTER JOIN lab_order ON lab_order.lab_order_number = lab_order_service.lab_order_number
-    LEFT OUTER JOIN lab_items ON lab_order.lab_items_code = lab_items.lab_items_code
-    WHERE patient.cid='${cid}' and ovst.vstdate = '${date_serv}' having lab_name is not null  `
+    INNER JOIN lab_order_service ON vn_stat.vn = lab_order_service.vn
+    LEFT OUTER JOIN lab_order ON lab_order.lab_order_number = lab_order_service.lab_order_number AND lab_order.lab_items_code = lab_order_service.lab_code
+    LEFT OUTER JOIN lab_items ON lab_items.lab_items_code = lab_order.lab_items_code
+    WHERE patient.cid = '${cid}' and ovst.vstdate = '${date_serv}' having lab_name is not null
+    ORDER BY
+    date_serv ASC,
+    time_serv ASC  `
     r = await knex.raw(sql)
     //console.log(r)
     res.json(r[0]);
