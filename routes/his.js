@@ -69,7 +69,7 @@ router.post('/drug', async function (req, res, next) {
     drugitems.strength,
     opitemrece.qty AS drug_total,
     drugitems.units AS drug_unit,
-    CONCAT(drugusage.name1,' ',drugusage.name2,' ',drugusage.name3) AS drug_use
+    if(drugusage.shortlist is null,concat(sp_use.name1," ",sp_use.name2," ",sp_use.name3),drugusage.shortlist) as"drug_use"
     FROM
     vn_stat
     LEFT OUTER JOIN patient ON vn_stat.hn = patient.hn
@@ -78,6 +78,7 @@ router.post('/drug', async function (req, res, next) {
     LEFT OUTER JOIN opitemrece ON opitemrece.vn = vn_stat.vn
     INNER JOIN drugitems ON opitemrece.icode = drugitems.icode
     LEFT OUTER JOIN drugusage ON opitemrece.drugusage = drugusage.drugusage
+    left outer join sp_use  on sp_use.sp_use=opitemrece.sp_use
     WHERE patient.cid = '${cid}'  and vn_stat.vstdate = '${date_serv}'`
     //console.log(sql)
     r = await knex.raw(sql)
