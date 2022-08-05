@@ -66,6 +66,7 @@ router.post('/drug', async function (req, res, next) {
     opitemrece.vsttime AS time_serv,
     drugitems.did AS drug_code,
     drugitems.name AS drug_name,
+    drugitems.strength,
     opitemrece.qty AS drug_total,
     drugitems.units AS drug_unit,
     CONCAT(drugusage.name1,' ',drugusage.name2,' ',drugusage.name3) AS drug_use
@@ -101,7 +102,8 @@ router.post('/lab', async function (req, res, next) {
     ovst.vsttime AS time_serv,
     lab_order_service.lab_code,
     lab_items.lab_items_name AS lab_name,
-    lab_order.lab_order_result AS lab_result
+    lab_order.lab_order_result AS lab_result,
+    lab_items.lab_items_normal_value AS lab_normal
     FROM
     vn_stat
     LEFT OUTER JOIN ovst ON vn_stat.vn = ovst.vn
@@ -111,10 +113,7 @@ router.post('/lab', async function (req, res, next) {
     INNER JOIN lab_order_service ON vn_stat.vn = lab_order_service.vn
     LEFT OUTER JOIN lab_order ON lab_order.lab_order_number = lab_order_service.lab_order_number AND lab_order.lab_items_code = lab_order_service.lab_code
     LEFT OUTER JOIN lab_items ON lab_items.lab_items_code = lab_order.lab_items_code
-    WHERE patient.cid = '${cid}' and ovst.vstdate = '${date_serv}' having lab_name is not null
-    ORDER BY
-    date_serv ASC,
-    time_serv ASC  `
+    WHERE patient.cid = '${cid}' and ovst.vstdate = '${date_serv}' having lab_name is not null`
     r = await knex.raw(sql)
     //console.log(r)
     res.json(r[0]);
