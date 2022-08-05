@@ -42,7 +42,9 @@ router.post('/diag', async function (req, res, next) {
     left outer join icd101 on icd101.code=substring(ovstdiag.icd10,1,3)
     left outer join opdscreen o on o.vn=v.vn
     left outer join patient p on p.hn=ovst.hn
-    where ovstdiag.icd10 is not null and md5(p.cid) = '${cid}'  group by date_serv order by date_serv DESC `
+    where ovstdiag.icd10 is not null and md5(p.cid) = '${cid}'  
+    AND substring(ovstdiag.icd10,1,3) not in ('B24','B20','Y05')
+    group by date_serv order by date_serv DESC `
     r = await knex.raw(sql)
     //console.log(r)
     res.json(r[0]);
