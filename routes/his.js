@@ -120,26 +120,54 @@ router.post('/lab', async function (req, res, next) {
 
 })
 
-router.post('/drugallergy', async function (req, res, next) {
+router.post('/allergy', async function (req, res, next) {
     cor(res)
-    console.log('drugallergy', req.body)
-    res.json({
-        'name': 'แอสไพลิน',
-        'symtom': 'พื่นแดง'
-    })
+    console.log('allergy', req.body)
+    sql = `SELECT
+    patient.cid,
+    CONCAT(patient.pname,patient.fname,' ',patient.lname) AS fullname,
+    if(patient.sex = '1','ชาย','หญิง') sex,
+    patient.birthday AS birth,
+    (SELECT hospitalcode FROM opdconfig LIMIT 1) AS hoscode,
+    (SELECT hospitalname FROM opdconfig LIMIT 1) AS hosname,
+    opd_allergy.agent,
+    opd_allergy.symptom,
+    opd_allergy.begin_date
+    FROM
+    patient
+    LEFT OUTER JOIN opd_allergy ON opd_allergy.hn = patient.hn
+    WHERE opd_allergy.agent IS NOT NULL 
+    AND md5(patient.cid) = '${cid}'
+    `
+    r = await knex.raw(sql)
+    res.json(r[0])
 
 })
 
 router.post('/appoint', async function (req, res, next) {
     cor(res)
     console.log('appoint', req.body)
-    res.json({
-        'hos': 'รพ.เด่นชัย',
-        'date': '2022-11-30',
-        'time': '08:30',
-        'dep': 'ผู้ป่วยนอก',
-        'cause': 'ติดตามอาการ'
-    })
+    sql = `SELECT
+    patient.cid,
+    CONCAT(patient.pname,patient.fname,' ',patient.lname) AS fullname,
+    if(patient.sex=1,'ชาย','หญิง') sex,
+    patient.birthday AS birth,
+    (SELECT hospitalcode from opdconfig LIMIT 1) hoscode,
+    (SELECT hospitalname from opdconfig LIMIT 1) AS hosname,
+    oapp.nextdate,
+    oapp.nexttime,
+    clinic.name AS clinic,
+    oapp.note
+    FROM
+    patient
+    LEFT OUTER JOIN oapp ON oapp.hn = patient.hn
+    LEFT OUTER JOIN clinic ON oapp.clinic = clinic.clinic
+    WHERE oapp.nextdate is not NULL  AND md5(patient.cid) = '${cid}'
+    AND oapp.nextdate >= CURRENT_DATE
+    order by oapp.nexttime ASC LIMIT 1 
+    `
+    r = await knex.raw(sql)
+    res.json(r[0])
 
 })
 
