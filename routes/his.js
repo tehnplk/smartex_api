@@ -147,24 +147,26 @@ router.post('/allergy', async function (req, res, next) {
 router.post('/appoint', async function (req, res, next) {
     cor(res)
     console.log('appoint', req.body)
-    sql = `SELECT
-    patient.cid,
-    CONCAT(patient.pname,patient.fname,' ',patient.lname) AS fullname,
-    if(patient.sex=1,'ชาย','หญิง') sex,
-    patient.birthday AS birth,
-    (SELECT hospitalcode from opdconfig LIMIT 1) hoscode,
-    (SELECT hospitalname from opdconfig LIMIT 1) AS hosname,
-    oapp.nextdate,
-    oapp.nexttime,
-    clinic.name AS clinic,
-    oapp.note
-    FROM
-    patient
-    LEFT OUTER JOIN oapp ON oapp.hn = patient.hn
-    LEFT OUTER JOIN clinic ON oapp.clinic = clinic.clinic
-    WHERE oapp.nextdate is not NULL  AND md5(patient.cid) = '${cid}'
-    AND oapp.nextdate >= CURRENT_DATE
-    order by oapp.nexttime ASC LIMIT 1 
+    sql = `SELECT * from (
+        SELECT
+            patient.cid,
+            CONCAT(patient.pname,patient.fname,' ',patient.lname) AS fullname,
+            if(patient.sex=1,'ชาย','หญิง') sex,
+            patient.birthday AS birth,
+            (SELECT hospitalcode from opdconfig LIMIT 1) hoscode,
+            (SELECT hospitalname from opdconfig LIMIT 1) AS hosname,
+            oapp.nextdate,
+            oapp.nexttime,
+            clinic.name AS clinic,
+            oapp.note
+            FROM
+            patient
+            LEFT OUTER JOIN oapp ON oapp.hn = patient.hn
+            LEFT OUTER JOIN clinic ON oapp.clinic = clinic.clinic
+            WHERE oapp.nextdate is not NULL  AND md5(patient.cid) =  '${cid}' 
+            AND oapp.nextdate >= CURRENT_DATE
+        
+        ) a  ORDER BY a.nextdate ASC limit 1
     `
     r = await knex.raw(sql)
     res.json(r[0])
