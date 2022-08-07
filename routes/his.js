@@ -14,9 +14,10 @@ function cor(res) {
 
 async function check_token(token) {
     n = false
-    r = await knex2.raw(`select * from api_token where token = '${token}'`)
+    r = await knex2.raw(`select * from api_token where token = '${token}' and active = '1'`)
     if (r[0].length > 0) {
         n = true
+        await knex2.raw(`update api_token set last_request = now() where token = '${token}'`)
     }
     return n
 }
