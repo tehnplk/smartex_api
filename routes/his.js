@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var knex = require('../con_his');
+var knex2 = require('../con_db');
 var md5 = require('md5')
 
 function cor(res) {
@@ -9,6 +10,15 @@ function cor(res) {
     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type'); // If needed
     res.setHeader('Access-Control-Allow-Credentials', true); // If needed
 
+}
+
+async function check_token(token) {
+    n = false
+    r = await knex2.raw(`select * from api_token where token = '${token}'`)
+    if (r[0].length > 0) {
+        n = true
+    }
+    return n
 }
 
 
@@ -32,6 +42,7 @@ router.post('/diag', async function (req, res, next) {
     cor(res)
     console.log('diag', req.body)
     cid = req.body.cid
+    api_token = req.body.api_token
     sql = `select p.cid,concat(p.pname," ",p.fname," ", p.lname) as "fullname",p.sex,
     p.birthday "birth",v.hcode  as "hoscode",'' as "hosname",
     ovst.vstdate as"date_serv",ovst.vsttime as"time_serv",
@@ -45,9 +56,16 @@ router.post('/diag', async function (req, res, next) {
     where ovstdiag.icd10 is not null and md5(p.cid) = '${cid}'  
     AND substring(ovstdiag.icd10,1,3) not in ('B24','B20','Y05')
     group by date_serv order by date_serv DESC `
-    r = await knex.raw(sql)
-    //console.log(r)
-    res.json(r[0]);
+
+    auth = await check_token(api_token)
+    if (auth == true) {
+        r = await knex.raw(sql)
+        res.json(r[0]);
+    } else {
+        res.json([])
+    }
+
+
 });
 
 
@@ -126,6 +144,7 @@ router.post('/lab', async function (req, res, next) {
 router.post('/allergy', async function (req, res, next) {
     cor(res)
     console.log('allergy', req.body)
+    cid = req.body.cid
     sql = `SELECT
     patient.cid,
     CONCAT(patient.pname,patient.fname,' ',patient.lname) AS fullname,
@@ -150,6 +169,7 @@ router.post('/allergy', async function (req, res, next) {
 router.post('/appoint', async function (req, res, next) {
     cor(res)
     console.log('appoint', req.body)
+    cid = req.body.cid
     sql = `SELECT * from (
         SELECT
             patient.cid,
