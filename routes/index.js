@@ -109,12 +109,12 @@ router.post('/lab', async function (req, res, next) {
   })
 });
 
-router.post('/anc', async function (req, res, next) {
+router.post('/allergy', async function (req, res, next) {
   d_update = new Date();
   console.log(req.body);
   var result = 'err'
   try {
-    result = await knex('anc')
+    result = await knex('allergy')
       .insert(req.body)
 
   } catch (error) {
@@ -123,7 +123,27 @@ router.post('/anc', async function (req, res, next) {
   }
 
   res.json({
-    'send_to_anc': {
+    'send_to_allergy': {
+      'result': result
+    }
+  })
+});
+
+router.post('/appoint', async function (req, res, next) {
+  d_update = new Date();
+  console.log(req.body);
+  var result = 'err'
+  try {
+    result = await knex('appoint')
+      .insert(req.body)
+
+  } catch (error) {
+    console.log(error)
+    result = error.code
+  }
+
+  res.json({
+    'send_to_appoint': {
       'result': result
     }
   })

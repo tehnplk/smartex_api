@@ -187,8 +187,7 @@ router.post('/appoint', async function (req, res, next) {
             patient
             LEFT OUTER JOIN oapp ON oapp.hn = patient.hn
             LEFT OUTER JOIN clinic ON oapp.clinic = clinic.clinic
-            WHERE oapp.nextdate is not NULL  AND md5(patient.cid) =  '${cid}' 
-            AND oapp.nextdate >= CURRENT_DATE
+            WHERE oapp.nextdate is not NULL AND oapp.nextdate >= CURRENT_DATE  AND md5(patient.cid) =  '${cid}'           
         
         ) a  ORDER BY a.nextdate ASC limit 1
     `
