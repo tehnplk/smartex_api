@@ -3,6 +3,7 @@ var router = express.Router();
 var knex = require('../con_db');
 //var knex2 = require('../con_db');
 var md5 = require('md5')
+const main_hoscode = '11452'
 
 function cor(res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -37,7 +38,10 @@ router.post('/diag', async function (req, res, next) {
     console.log('sub diag', req.body)
     cid = req.body.cid
     api_token = req.body.api_token
-    sql = `select *,group_concat(dx_name) dx_name2 from diag where md5(cid)='${cid}' group by hoscode,date_serv order by date_serv DESC `
+
+    sql = `select *,group_concat(dx_name) dx_name2 from diag where md5(cid)='${cid}' 
+    and hoscode not in  ('${main_hoscode}')
+    group by hoscode,date_serv order by date_serv DESC `
 
     auth = await check_token(api_token)
     if (auth == true) {
@@ -58,7 +62,9 @@ router.post('/drug', async function (req, res, next) {
     hoscode = req.body.hoscode
     //cid = md5(cid)
     date_serv = req.body.date_serv
-    sql = `select * from drug where date_serv = '${date_serv}' and hoscode = '${hoscode}' and cid = '${cid}'`
+    sql = `select * from drug where date_serv = '${date_serv}' and hoscode = '${hoscode}' and cid = '${cid}' 
+    and hoscode not in  ('${main_hoscode}')
+    `
     //console.log(sql)
     r = await knex.raw(sql)
     //console.log(r)
@@ -72,7 +78,9 @@ router.post('/lab', async function (req, res, next) {
     hoscode = req.body.hoscode
     //cid = md5(cid)
     date_serv = req.body.date_serv
-    sql = `select * from lab where date_serv = '${date_serv}' and hoscode = '${hoscode}' and cid = '${cid}'`
+    sql = `select * from lab where date_serv = '${date_serv}' and hoscode = '${hoscode}' and cid = '${cid}' 
+    and hoscode not in  ('${main_hoscode}')
+    `
     r = await knex.raw(sql)
     //console.log(r)
     res.json(r[0]);
