@@ -30,18 +30,10 @@ router.get('/', async function (req, res, next) {
     })
 });
 
-router.post('/pt', async function (req, res, next) {
-    cor(res)
-    console.log(req.body)
-    pt_name = req.body.pt_name
-    sql = `select cid,hn,concat(pname,' ',fname,' ',lname) fullname,sex,birthday from patient where name like '%${pt_name}%' `
-    r = await knex.raw(sql)
-    res.json(r[0]);
-})
 
 router.post('/diag', async function (req, res, next) {
     cor(res)
-    console.log('diag', req.body)
+    console.log('main diag', req.body)
     cid = req.body.cid
     api_token = req.body.api_token
     sql = `select p.cid,concat(p.pname," ",p.fname," ", p.lname) as "fullname",p.sex,
@@ -72,7 +64,7 @@ router.post('/diag', async function (req, res, next) {
 
 router.post('/drug', async function (req, res, next) {
     cor(res)
-    console.log('drug', req.body)
+    console.log('main drug', req.body)
     cid = req.body.cid
     //cid = md5(cid)
     date_serv = req.body.date_serv
@@ -109,7 +101,7 @@ router.post('/drug', async function (req, res, next) {
 
 router.post('/lab', async function (req, res, next) {
     cor(res)
-    console.log('lab', req.body)
+    console.log('main lab', req.body)
     cid = req.body.cid
     //cid = md5(cid)
     date_serv = req.body.date_serv
@@ -144,7 +136,7 @@ router.post('/lab', async function (req, res, next) {
 
 router.post('/allergy', async function (req, res, next) {
     cor(res)
-    console.log('allergy', req.body)
+    console.log('main allergy', req.body)
     cid = req.body.cid
     sql = `SELECT
     patient.cid,
@@ -169,7 +161,7 @@ router.post('/allergy', async function (req, res, next) {
 
 router.post('/appoint', async function (req, res, next) {
     cor(res)
-    console.log('appoint', req.body)
+    console.log('main appoint', req.body)
     cid = req.body.cid
     sql = `SELECT * from (
         SELECT
