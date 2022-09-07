@@ -4,7 +4,8 @@
     },
     "mqtt":{
         "broker":"broker.emqx.io",
-        "topic":"smartex/test"
+        "topic":"smartex/test",
+        "port":1883
     }
     
 }

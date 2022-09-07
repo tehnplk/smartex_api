@@ -8,12 +8,20 @@ var mqttClient = new mqttHandler();
 
 var socket_client = require("socket.io-client")('http://localhost:3000');
 
+var config = require('../config.json');
 
 router.get('/sql', async function (req, res, next) {
   result = await knex('c_sql').where({
     note: '1'
   }).select('id', 'cmd')
   res.json(result)
+});
+
+router.get('/mqtt', async (req, res) => {
+  res.json({
+      'broker': config.mqtt.broker,
+      'topic':config.mqtt.topic
+  })
 });
 
 router.get('/io/:cid', async function (req, res, next) {
@@ -27,7 +35,7 @@ router.get('/io/:cid', async function (req, res, next) {
 
 /* GET home page. */
 router.get('/', function (req, res, next) {
-  res.render('index', { title: 'SmartEx API 1.0.1' });
+  res.render('index', { title: 'SmartEx API 1.0.1' ,mqtt:config.mqtt});
 });
 router.post('/test', function (req, res, next) {
   res.json({

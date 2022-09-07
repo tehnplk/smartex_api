@@ -9,20 +9,22 @@ router.post('/login', async (req, res) => {
     rows = await knex('api_token').where({
         username: username,
         password: password,
-        active:'1'
+        active: '1'
     }).select('username')
-    console.log('rows' , rows.length)
+    console.log('rows', rows.length)
     if (rows.length) {
         res.json({
             'login': '1'
         })
-    }else{
+    } else {
         res.json({
             'login': '0'
-        }) 
+        })
     }
 
 });
+
+
 
 
 router.get('/test', (req, res) => {
