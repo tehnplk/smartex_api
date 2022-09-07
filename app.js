@@ -23,6 +23,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', require('./routes/index'));
 app.use('/main', require('./routes/main'));
 app.use('/sub', require('./routes/sub'));
+app.use('/auth', require('./routes/auth'));
 
 
 // catch 404 and forward to error handler
