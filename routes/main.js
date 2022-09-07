@@ -39,7 +39,7 @@ router.post('/diag', async function (req, res, next) {
     sql = `select p.cid,concat(p.pname," ",p.fname," ", p.lname) as "fullname",p.sex,
     p.birthday "birth",v.hcode  as "hoscode",'' as "hosname",
     ovst.vstdate as"date_serv",ovst.vsttime as"time_serv",
-    ovstdiag.icd10 as "dx_code",group_concat(concat(icd101.code," : ",icd101.name)) as "dx_name",o.cc
+    ovstdiag.icd10 as "dx_code",group_concat(concat(icd101.code," : ",icd101.name)) as "dx_name",o.cc ,o.pe
     from ovst
     left outer join vn_stat v on v.vn=ovst.vn
     left outer join ovstdiag on ovst.vn=ovstdiag.vn and ovstdiag.diagtype="1"

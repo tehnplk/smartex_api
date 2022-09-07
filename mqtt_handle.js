@@ -2,11 +2,15 @@ const mqtt = require('mqtt');
 var moment = require('moment');
 const { now } = require('moment');
 
+const config = require('./config.json')
+
+var mqtt_broker = "mqtt://" + config.mqtt.broker;
+var mqtt_topic = config.mqtt.topic
 
 class MqttHandler {
   constructor() {
     this.mqttClient = null;
-    this.host = 'mqtt://mqtt.fluux.io';
+    this.host = mqtt_broker;
     this.port = 1883;
     //this.clientId = 'smartex_nodejs';
     //this.username = 'YOUR_USER'; // mqtt credentials if these are needed to connect
@@ -18,10 +22,10 @@ class MqttHandler {
   connect() {
     var now = moment().format('YYYY_MM_D_H_mm_ss');
     // Connect mqtt with credentials (in case of needed, otherwise we can omit 2nd param)
-    this.mqttClient = mqtt.connect(this.host,{
-      clientId:`client-${now}`,
-      keepalive:5000,
-      reconnectPeriod:500,
+    this.mqttClient = mqtt.connect(this.host, {
+      clientId: `client-${now}`,
+      keepalive: 5000,
+      reconnectPeriod: 500,
       rejectUnauthorized: false
     })
 
@@ -36,11 +40,11 @@ class MqttHandler {
     // Connection callback
     this.mqttClient.on('connect', () => {
       var now = moment().format('YYYY-MM-D H:mm:ss');
-      console.log(now, 'mqtt', 'client connected');
+      console.log(now, 'mqtt', config.mqtt.broker, mqtt_topic, 'is connected');
     });
 
     // mqtt subscriptions
-    this.mqttClient.subscribe('smartex/denchai', { qos: 0 });
+    this.mqttClient.subscribe(mqtt_topic, { qos: 0 });
 
     // When a message arrives, console.log it
     this.mqttClient.on('message', function (topic, message) {
@@ -56,7 +60,7 @@ class MqttHandler {
 
   // Sends a mqtt message to topic: mytopic
   sendMessage(message) {
-    this.mqttClient.publish('smartex/denchai', message);
+    this.mqttClient.publish(mqtt_topic, message);
   }
 }
 

@@ -1,0 +1,10 @@
+{
+    "api":{
+        "port":8000
+    },
+    "mqtt":{
+        "broker":"broker.emqx.io",
+        "topic":"smartex/test"
+    }
+    
+}
