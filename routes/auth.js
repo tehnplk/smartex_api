@@ -8,7 +8,8 @@ router.post('/login', async (req, res) => {
     const { username, password } = req.body
     rows = await knex('api_token').where({
         username: username,
-        password: password
+        password: password,
+        active:'1'
     }).select('username')
     console.log('rows' , rows.length)
     if (rows.length) {
